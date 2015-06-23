@@ -42,8 +42,7 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	}
 
 	// Synchronously bind the listener to all nics.
-	uclog << U("Starting listener.") << endl;
-	//http_listener listener(U("http://localhost:50008/json"));
+	uclog << _T("Starting listener on hostname ") << hostname << endl;
 	http_listener listener(hostname);
 
 	listener.open().wait();
