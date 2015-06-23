@@ -24,18 +24,22 @@ void respond(const http_request& request, const status_code& status, json::value
 	json::value resp;
 	resp[U("status")] = json::value::number(status);
 	if (!response.is_null()) {
-		resp[U("response")] = response;
+		resp[U("result")] = response;
 	}
 
 	if (error_code != NULL) {
-		resp[U("error_code")] = json::value::string(error_code);
+		resp[U("errorCode")] = json::value::string(error_code);
 	}
 
 	// Pack in the current time for debugging purposes.
-	time_t now = time(0);
 	utility::stringstream_t ss;
-	ss << put_time(localtime(&now), L"%Y-%m-%dT%H:%S:%MZ");
-	resp[U("server_time")] = json::value::string(ss.str());
+
+	struct tm tm;
+	auto t = std::time(nullptr);
+	localtime_s(&tm, &t);
+	ss << std::put_time(&tm, _T("%Y-%m-%dT%H-%M-%SZ"));
+	resp[U("serverTime")] = json::value::string(ss.str());
+	
 	request.reply(status, resp);
 }
 
@@ -177,23 +181,31 @@ void AnswerGetRequest(http_request& req) {
 	uclog << U("Received request: ") << request_name << endl;
 
 	WindowsFilter* wf = new WindowsFilter();
+	json::value windows;
 
 	if (found_name->second == L"dw") {
-		respond(req, status_codes::OK, wf->CreateWindowsDocument()->GetWindowsDocDesktop(), NULL);
+		windows[_T("windows")] = wf->CreateWindowsDocument()->GetWindowsDocDesktop();
+		respond(req, status_codes::OK, windows , NULL);
+
 		return;
 	} else if (found_name->second == L"mw") {
 		MakeFiltersFromUri(http_get_vars, wf);
-		respond(req, status_codes::OK, wf->CreateWindowsDocumentForMainWindows()->GetWindowsDoc(), NULL);
+		windows[_T("windows")] = wf->CreateWindowsDocumentForMainWindows()->GetWindowsDoc();
+		respond(req, status_codes::OK, windows, NULL);
 		return;
 	} else if (found_name->second == L"cw") {
 		auto hwname = http_get_vars.find(U("hwnd"));
 		if (hwname == end(http_get_vars)) {
-			respond(req, status_codes::BadRequest, json::value::string(L"cw query without hwnd"), NULL);
+			respond_error(req, L"cw query without hwnd");
 		}
-		HWND hWnd = (HWND)_tstoi(hwname->second.c_str());
+
+		HWND hWnd = (HWND)_tcstoul(hwname->second.c_str(), 0, 0);
 		MakeFiltersFromUri(http_get_vars, wf);
-		respond(req, status_codes::OK, wf->CreateWindowsDocumentForChildWindows(hWnd)->GetWindowsDoc(), NULL);
+		windows[_T("windows")] = wf->CreateWindowsDocumentForChildWindows(hWnd)->GetWindowsDoc();
+		respond(req, status_codes::OK, windows, NULL);
+		return;
 	}
+	
 	respond_error(req, L"unknown query");
 
 	//respond(req, status_codes::OK, json::value::string(U("Request received for: ") + request_name));
