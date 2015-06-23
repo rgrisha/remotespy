@@ -18,7 +18,7 @@ void WindowsDocument::CreateWindowEntry(HWND hwnd) {
 
 	TCHAR buffer1[1024];
 	::GetClassName(hwnd, buffer1, sizeof(buffer1));
-	lwe[L"class"] = json::value::string(buffer1);
+	lwe[L"wclass"] = json::value::string(buffer1);
 
 	RECT rect;
 	if (GetWindowRect(hwnd, &rect)) {
