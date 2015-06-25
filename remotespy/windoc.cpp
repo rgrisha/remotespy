@@ -12,20 +12,24 @@ void WindowsDocument::CreateWindowEntry(HWND hwnd) {
 	json::value lwe;
 
 	TCHAR buffer[1024];
-	lwe[L"hwnd"] = json::value::number((int)hwnd);
+	lwe[_T("hwnd")] = json::value::number((int)hwnd);
 	::GetWindowText(hwnd, buffer, sizeof(buffer));
-	lwe[L"text"] = json::value::string(buffer);
+	lwe[_T("text")] = json::value::string(buffer);
 
 	TCHAR buffer1[1024];
 	::GetClassName(hwnd, buffer1, sizeof(buffer1));
-	lwe[L"wclass"] = json::value::string(buffer1);
+	lwe[_T("wclass")] = json::value::string(buffer1);
 
+	DWORD process_id;
+	GetWindowThreadProcessId(hwnd, &process_id);
+	
 	RECT rect;
 	if (GetWindowRect(hwnd, &rect)) {
-		lwe[L"left"] = json::value::number(rect.left);
-		lwe[L"right"] = json::value::number(rect.right);
-		lwe[L"top"] = json::value::number(rect.top);
-		lwe[L"bottom"] = json::value::number(rect.bottom);
+		lwe[_T("left")] = json::value::number(rect.left);
+		lwe[_T("right")] = json::value::number(rect.right);
+		lwe[_T("top")] = json::value::number(rect.top);
+		lwe[_T("bottom")] = json::value::number(rect.bottom);
+		lwe[_T("pid")] = json::value::number((int)process_id);
 	}
 
 	windows[windows_count++] = lwe;
