@@ -145,9 +145,9 @@ void AnswerPutRequest(http_request& req) {
 	auto http_vars = uri::split_query(req.request_uri().query());
 
 	auto end = http_vars.end();
-	auto action_name = http_vars.find(U("ac"));
+	auto action_name = http_vars.find(_T("ac"));
 	if (action_name == end) {
-		respond_error(req, L"no action specified");
+		respond_error(req, _T("no action specified"));
 		return;
 	}
 
@@ -186,13 +186,10 @@ void AnswerGetRequest(http_request& req) {
 	if (found_name->second == L"dw") {
 		windows[_T("windows")] = wf->CreateWindowsDocument()->GetWindowsDocDesktop();
 		respond(req, status_codes::OK, windows , NULL);
-
-		return;
 	} else if (found_name->second == L"mw") {
 		MakeFiltersFromUri(http_get_vars, wf);
 		windows[_T("windows")] = wf->CreateWindowsDocumentForMainWindows()->GetWindowsDoc();
-		respond(req, status_codes::OK, windows, NULL);
-		return;
+		respond(req, status_codes::OK, windows, NULL);		
 	} else if (found_name->second == L"cw") {
 		auto hwname = http_get_vars.find(U("hwnd"));
 		if (hwname == end(http_get_vars)) {
@@ -202,14 +199,11 @@ void AnswerGetRequest(http_request& req) {
 		HWND hWnd = (HWND)_tcstoul(hwname->second.c_str(), 0, 0);
 		MakeFiltersFromUri(http_get_vars, wf);
 		windows[_T("windows")] = wf->CreateWindowsDocumentForChildWindows(hWnd)->GetWindowsDoc();
-		respond(req, status_codes::OK, windows, NULL);
-		return;
-	}
-	
-	respond_error(req, L"unknown query");
 
-	//respond(req, status_codes::OK, json::value::string(U("Request received for: ") + request_name));
+		respond(req, status_codes::OK, windows, NULL);		
+	} else {
+		respond_error(req, L"unknown query");
+	}
 
 	delete wf;
-
 }

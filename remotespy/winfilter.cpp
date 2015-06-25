@@ -44,7 +44,7 @@ BOOL WindowsFilter::ApplyFilter(HWND hWnd) {
 	if (filters.empty()) return true;
 	for (auto flt = filters.begin(), end = filters.end(); flt != end; flt++) {
 		std::function<BOOL(HWND)> &fn = *flt;
-		if (fn(hWnd)) return false;
+		if (!fn(hWnd)) return false;
 	}
 	return true;
 }
@@ -52,7 +52,12 @@ BOOL WindowsFilter::ApplyFilter(HWND hWnd) {
 void WindowsFilter::FilterWindowText(utility::string_t text) {
 	auto fn = [text](HWND hWnd) {
 		TCHAR buffer[4096];
-		::GetWindowText(hWnd, buffer, sizeof(buffer));
+		buffer[0] = '\0';
+		int ret = ::GetWindowText(hWnd, buffer, sizeof(buffer));
+		if (ret == 0) {
+			uclog << _T("Error in FilterWindowText: ") << GetLastErrorAsString() << endl;
+			return false;
+		}
 		return (_tcsstr(buffer, text.c_str()) != NULL);
 	};
 	filters.push_back(fn);
@@ -61,8 +66,14 @@ void WindowsFilter::FilterWindowText(utility::string_t text) {
 void WindowsFilter::FilterWindowClass(utility::string_t text) {
 	auto fn = [text](HWND hWnd) {
 		TCHAR buffer[4096];
-		::GetClassName(hWnd, buffer, sizeof(buffer));
-		return (_tcsstr(buffer, text.c_str()) != NULL);
+		buffer[0] = '\0';
+		int ret = ::GetClassName(hWnd, buffer, sizeof(buffer));
+		if (ret == 0) {
+			uclog << _T("Error in FilterWindowClass: ") << GetLastErrorAsString() << endl;
+			return false;
+		}
+		TCHAR* result = _tcsstr(buffer, text.c_str());
+		return (result != NULL);
 	};
 	filters.push_back(fn);
 }

@@ -82,6 +82,7 @@
     <ClInclude Include="actions.h" />
     <ClInclude Include="responses.h" />
     <ClInclude Include="uri_map.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="windoc.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -91,6 +92,7 @@
     <ClCompile Include="actions.cpp" />
     <ClCompile Include="responses.cpp" />
     <ClCompile Include="remotespy.cpp" />
+    <ClCompile Include="utils.cpp" />
     <ClCompile Include="windoc.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="winfilter.cpp" />
