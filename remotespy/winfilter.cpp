@@ -53,8 +53,8 @@ void WindowsFilter::FilterWindowText(utility::string_t text) {
 	auto fn = [text](HWND hWnd) {
 		TCHAR buffer[4096];
 		buffer[0] = '\0';
-		int ret = ::GetWindowText(hWnd, buffer, sizeof(buffer));
-		if (ret == 0) {
+		::GetWindowText(hWnd, buffer, sizeof(buffer));
+		if (GetLastError() != ERROR_SUCCESS) {
 			uclog << _T("Error in FilterWindowText: ") << GetLastErrorAsString() << endl;
 			return false;
 		}

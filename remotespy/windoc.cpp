@@ -29,8 +29,13 @@ void WindowsDocument::CreateWindowEntry(HWND hwnd) {
 		lwe[_T("right")] = json::value::number(rect.right);
 		lwe[_T("top")] = json::value::number(rect.top);
 		lwe[_T("bottom")] = json::value::number(rect.bottom);
-		lwe[_T("pid")] = json::value::number((int)process_id);
 	}
+	lwe[_T("pid")] = json::value::number((int)process_id);
+	lwe[_T("parent")] = json::value::number((int)GetParent(hwnd));
+	lwe[_T("style_ex")] = json::value::number(GetWindowLong(hwnd, GWL_EXSTYLE));
+	lwe[_T("hinstance")] = json::value::number(GetWindowLong(hwnd, GWL_HINSTANCE));
+	lwe[_T("id")] = json::value::number(GetWindowLong(hwnd, GWL_ID ));
+	lwe[_T("style")] = json::value::number(GetWindowLong(hwnd, GWL_STYLE ));
 
 	windows[windows_count++] = lwe;
 }
