@@ -18,6 +18,42 @@ void MakeFiltersFromUri(uri_map& get_vars, WindowsFilter* wf) {
 	if (found_name != end && !(found_name->second.empty())) {
 		wf->FilterWindowClass(found_name->second);
 	}
+	found_name = get_vars.find(U("left"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int left = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowRightOf(left);
+	}
+	found_name = get_vars.find(U("right"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int right = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowLeftOf(right);
+	}
+	found_name = get_vars.find(U("top"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int top = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowBelowOf(top);
+	}
+	found_name = get_vars.find(U("bottom"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int bottom = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowAboveOf(bottom);
+	}
+	found_name = get_vars.find(U("pid"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int pid = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowPid(pid);
+	}
+	found_name = get_vars.find(U("par"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int parent = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowParent(parent);
+	}
+	found_name = get_vars.find(U("id"));
+	if (found_name != end && !(found_name->second.empty())) {
+		int id = _tcstoul(found_name->second.c_str(), 0, 0);
+		wf->FilterWindowId(id);
+	}
+	
 }
 
 void respond(const http_request& request, const status_code& status, json::value& response, TCHAR* error_code) {

@@ -22,7 +22,15 @@ public:
 
 	void FilterWindowText(utility::string_t text);
 	void FilterWindowClass(utility::string_t text);
-	void FilterWindowInsideRect(RECT rect);
+
+	void FilterWindowRightOf(int left);
+	void FilterWindowLeftOf(int right);
+	void FilterWindowBelowOf(int top);
+	void FilterWindowAboveOf(int bottom);
+
+	void FilterWindowPid(int pid);
+	void FilterWindowParent(int parent);
+	void FilterWindowId(long id);
 
 	BOOL ApplyFilter(HWND hWnd);
 

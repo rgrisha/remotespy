@@ -10,15 +10,18 @@ WindowsDocument::~WindowsDocument() {
 void WindowsDocument::CreateWindowEntry(HWND hwnd) {
 
 	json::value lwe;
-
 	TCHAR buffer[1024];
+	buffer[0] = 0;
+	
 	lwe[_T("hwnd")] = json::value::number((int)hwnd);
 	::GetWindowText(hwnd, buffer, sizeof(buffer));
-	lwe[_T("text")] = json::value::string(buffer);
+	utility::string_t window_text(buffer);
+	lwe[_T("text")] = json::value::string(window_text);
 
-	TCHAR buffer1[1024];
-	::GetClassName(hwnd, buffer1, sizeof(buffer1));
-	lwe[_T("wclass")] = json::value::string(buffer1);
+	buffer[0] = 0;
+	::GetClassName(hwnd, buffer, sizeof(buffer));
+	utility::string_t window_class(buffer);
+	lwe[_T("wclass")] = json::value::string(window_class);
 
 	DWORD process_id;
 	GetWindowThreadProcessId(hwnd, &process_id);
