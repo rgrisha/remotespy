@@ -46,14 +46,14 @@ int ClickMouse(HWND hWnd) {
 		return -1;
 	}
 
-	rect.left++;
-	rect.top++;
+	int x = (rect.right - rect.left) >> 1;
+	int y = (rect.bottom - rect.top) >> 1;
 
 	SetForegroundWindow(hWnd);
 	SetActiveWindow(hWnd);
 	SetFocus(hWnd);
 	Sleep(300);
-	SetCursorPos(rect.left, rect.top);
+	SetCursorPos(x, y);
 
 	return 0;
 }

@@ -53,7 +53,11 @@ void MakeFiltersFromUri(uri_map& get_vars, WindowsFilter* wf) {
 		int id = _tcstoul(found_name->second.c_str(), 0, 0);
 		wf->FilterWindowId(id);
 	}
-	
+	found_name = get_vars.find(U("process"));
+	if (found_name != end && !(found_name->second.empty())) {
+		wf->FilterWindowProcessName(found_name->second);
+	}
+
 }
 
 void respond(const http_request& request, const status_code& status, json::value& response, TCHAR* error_code) {

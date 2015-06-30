@@ -32,6 +32,8 @@ public:
 	void FilterWindowParent(int parent);
 	void FilterWindowId(long id);
 
+	void FilterWindowProcessName(utility::string_t text);
+
 	BOOL ApplyFilter(HWND hWnd);
 
 };

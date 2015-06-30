@@ -53,6 +53,7 @@ void WindowsFilter::FilterWindowText(utility::string_t text) {
 	auto fn = [text](HWND hWnd) {
 		TCHAR buffer[1024];
 		buffer[0] = '\0';
+		SetLastError(ERROR_SUCCESS);
 		::GetWindowText(hWnd, buffer, sizeof(buffer));
 		if (GetLastError() != ERROR_SUCCESS) {
 			uclog << _T("Error in FilterWindowText: ") << GetLastErrorAsString() << endl;
@@ -67,6 +68,7 @@ void WindowsFilter::FilterWindowClass(utility::string_t text) {
 	auto fn = [text](HWND hWnd) {
 		TCHAR buffer[1024];
 		buffer[0] = '\0';
+		SetLastError(ERROR_SUCCESS);
 		::GetClassName(hWnd, buffer, sizeof(buffer));
 		if (GetLastError() != ERROR_SUCCESS) {
 			uclog << _T("Error in FilterWindowClass: ") << GetLastErrorAsString() << endl;
@@ -136,10 +138,8 @@ void WindowsFilter::FilterWindowAboveOf(int bottom) {
 
 void WindowsFilter::FilterWindowPid(int pid) {
 	auto fn = [pid](HWND hWnd) {
-
 		DWORD process_id;
 		GetWindowThreadProcessId(hWnd, &process_id);
-
 		return pid == (int)process_id;
 	};
 	filters.push_back(fn);
@@ -159,19 +159,25 @@ void WindowsFilter::FilterWindowId(long id) {
 	filters.push_back(fn);
 }
 
-
-/*
-void WindowsFilter::FilterWindowInsideRect(RECT rect) {
-	auto fn = [&rect](HWND hWnd) {
-		RECT rectw;
+void WindowsFilter::FilterWindowProcessName(utility::string_t text) {
+	auto fn = [text](HWND hWnd) {
+		DWORD process_id;
+		GetWindowThreadProcessId(hWnd, &process_id);
+		bool ret = true;
 		
-		if (GetWindowRect(hWnd, &rectw)) {
-			return rect.top <= rectw.top && rect.left <= rectw.left &&
-				rect.bottom >= rectw.bottom && rect.right >= rectw.right;
-		} else {
-			return false;
+		HANDLE Handle = OpenProcess( PROCESS_QUERY_INFORMATION, FALSE, process_id);
+		if (Handle) {
+			TCHAR buffproc[MAX_PATH];
+			DWORD psize = sizeof(buffproc);
+
+			buffproc[0] = 0;
+			if (QueryFullProcessImageName(Handle, 0, buffproc, &psize)){
+				return (_tcsstr(buffproc, text.c_str()) != NULL);
+			}
+			CloseHandle(Handle);
 		}
+		return true;
 	};
 	filters.push_back(fn);
 }
-*/
+
