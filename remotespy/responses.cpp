@@ -179,6 +179,15 @@ void answer_mousemove(http_request req, uri_map& vars) {
 	respond_error(req, L"neither hwnd nor x,y specified");
 }
 
+void answer_window_close(http_request req, uri_map& vars) {
+	auto end = vars.end();
+	if (HWND hWnd = get_hwnd(vars)) {
+		CloseWindow(hWnd);
+		respond_ok(req);
+		return;
+	}
+}
+
 
 void AnswerPutRequest(http_request& req) {
 
@@ -199,6 +208,9 @@ void AnswerPutRequest(http_request& req) {
 		answer_settext(req, http_vars);
 	} else if (action_name->second == L"sendtext") {
 		answer_sendinput(req, http_vars);
+	}
+	else if (action_name->second == L"close") {
+		answer_window_close(req, http_vars);
 	} else {
 		respond_error(req, L"bad action");
 	}

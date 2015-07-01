@@ -66,6 +66,17 @@ int SetText(HWND hWnd, const TCHAR* msg) {
 	}
 }
 
+/*
+int CloseWindow(HWND hWnd) {
+	if (::SendMessage(hWnd, WM_CLOSE, 0, 0)) {
+		return 0;
+	}
+	else {
+		return -1;
+	}
+}
+*/
+
 //stolen from
 //https://nibuthomas.wordpress.com/2009/08/04/how-to-use-sendinput/
 BOOL SendKeyInput(const TCHAR* lpctszText) {
